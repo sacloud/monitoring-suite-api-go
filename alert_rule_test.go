@@ -16,13 +16,15 @@ package monitoringsuite_test
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"testing"
 
 	"github.com/google/uuid"
-	monitoringsuite "github.com/sacloud/monitoring-suite-api-go"
 
+	. "github.com/sacloud/monitoring-suite-api-go"
 	v1 "github.com/sacloud/monitoring-suite-api-go/apis/v1"
+	"github.com/sacloud/packages-go/testutil"
 	"github.com/stretchr/testify/require"
 )
 
@@ -34,7 +36,7 @@ func TestAlertRuleOp_List(t *testing.T) {
 		Results: []v1.AlertRule{TemplateAlertRule},
 	}
 	client := newTestClient(expected)
-	api := monitoringsuite.NewAlertRuleOp(client)
+	api := NewAlertRuleOp(client)
 	ctx := context.Background()
 	params := v1.AlertsProjectsRulesListParams{
 		Count: v1.NewOptInt(32),
@@ -54,7 +56,7 @@ func TestAlertRuleOp_List(t *testing.T) {
 func TestAlertRuleOp_List_403(t *testing.T) {
 	expected := newErrorResponse(403, "request not authorized")
 	client := newTestClient(expected, http.StatusForbidden)
-	api := monitoringsuite.NewAlertRuleOp(client)
+	api := NewAlertRuleOp(client)
 	ctx := context.Background()
 	params := v1.AlertsProjectsRulesListParams{}
 	_, err := api.List(ctx, params)
@@ -64,7 +66,7 @@ func TestAlertRuleOp_List_403(t *testing.T) {
 
 func TestAlertRuleOp_Read(t *testing.T) {
 	client := newTestClient(TemplateAlertRule)
-	api := monitoringsuite.NewAlertRuleOp(client)
+	api := NewAlertRuleOp(client)
 	ctx := context.Background()
 	actual, err := api.Read(ctx, "12345", uuid.New())
 	require.NoError(t, err)
@@ -78,7 +80,7 @@ func TestAlertRuleOp_Read(t *testing.T) {
 func TestAlertRuleOp_Read_404(t *testing.T) {
 	expected := newErrorResponse(404, "No AlertRule matches the given query.")
 	client := newTestClient(expected, http.StatusNotFound)
-	api := monitoringsuite.NewAlertRuleOp(client)
+	api := NewAlertRuleOp(client)
 	ctx := context.Background()
 	_, err := api.Read(ctx, "12345", uuid.New())
 	require.Error(t, err)
@@ -87,7 +89,7 @@ func TestAlertRuleOp_Read_404(t *testing.T) {
 
 func TestAlertRuleOp_Create(t *testing.T) {
 	client := newTestClient(TemplateAlertRule, http.StatusCreated)
-	api := monitoringsuite.NewAlertRuleOp(client)
+	api := NewAlertRuleOp(client)
 	ctx := context.Background()
 	rule := &TemplateAlertRule
 	actual, err := api.Create(ctx, "12345", rule)
@@ -100,7 +102,7 @@ func TestAlertRuleOp_Create(t *testing.T) {
 func TestAlertRuleOp_Create_400(t *testing.T) {
 	expected := newErrorResponse(400, "Invalid request body.")
 	client := newTestClient(expected, http.StatusBadRequest)
-	api := monitoringsuite.NewAlertRuleOp(client)
+	api := NewAlertRuleOp(client)
 	ctx := context.Background()
 	actual, err := api.Create(ctx, "12345", &v1.AlertRule{})
 	require.Nil(t, actual)
@@ -110,7 +112,7 @@ func TestAlertRuleOp_Create_400(t *testing.T) {
 
 func TestAlertRuleOp_Update(t *testing.T) {
 	client := newTestClient(TemplateAlertRule)
-	api := monitoringsuite.NewAlertRuleOp(client)
+	api := NewAlertRuleOp(client)
 	ctx := context.Background()
 	rule := &TemplateAlertRule
 	actual, err := api.Update(ctx, "12345", uuid.New(), rule)
@@ -123,7 +125,7 @@ func TestAlertRuleOp_Update(t *testing.T) {
 func TestAlertRuleOp_Update_400(t *testing.T) {
 	expected := newErrorResponse(400, "Invalid update parameters.")
 	client := newTestClient(expected, http.StatusBadRequest)
-	api := monitoringsuite.NewAlertRuleOp(client)
+	api := NewAlertRuleOp(client)
 	ctx := context.Background()
 	actual, err := api.Update(ctx, "12345", uuid.New(), &v1.AlertRule{})
 	require.Nil(t, actual)
@@ -134,7 +136,7 @@ func TestAlertRuleOp_Update_400(t *testing.T) {
 // ...existing code...
 func TestAlertRuleOp_Delete(t *testing.T) {
 	client := newTestClient(nil, http.StatusNoContent)
-	api := monitoringsuite.NewAlertRuleOp(client)
+	api := NewAlertRuleOp(client)
 	ctx := context.Background()
 	err := api.Delete(ctx, "12345", uuid.New())
 	require.NoError(t, err)
@@ -143,7 +145,7 @@ func TestAlertRuleOp_Delete(t *testing.T) {
 func TestAlertRuleOp_Delete_400(t *testing.T) {
 	expected := newErrorResponse(400, "Invalid delete request.")
 	client := newTestClient(expected, http.StatusBadRequest)
-	api := monitoringsuite.NewAlertRuleOp(client)
+	api := NewAlertRuleOp(client)
 	ctx := context.Background()
 	err := api.Delete(ctx, "12345", uuid.New())
 	require.Error(t, err)
@@ -159,7 +161,7 @@ func TestAlertRuleOp_ListHistories(t *testing.T) {
 		Results: []v1.History{TemplateHistory},
 	}
 	client := newTestClient(expected)
-	api := monitoringsuite.NewAlertRuleOp(client)
+	api := NewAlertRuleOp(client)
 	ctx := context.Background()
 	params := v1.AlertsProjectsRulesHistoriesListParams{
 		Count: v1.NewOptInt(10),
@@ -175,7 +177,7 @@ func TestAlertRuleOp_ListHistories(t *testing.T) {
 func TestAlertRuleOp_ListHistories_403(t *testing.T) {
 	expected := newErrorResponse(403, "request not authorized")
 	client := newTestClient(expected, http.StatusForbidden)
-	api := monitoringsuite.NewAlertRuleOp(client)
+	api := NewAlertRuleOp(client)
 	ctx := context.Background()
 	params := v1.AlertsProjectsRulesHistoriesListParams{}
 	_, err := api.ListHistories(ctx, params)
@@ -185,7 +187,7 @@ func TestAlertRuleOp_ListHistories_403(t *testing.T) {
 
 func TestAlertRuleOp_ReadHistory(t *testing.T) {
 	client := newTestClient(TemplateHistory)
-	api := monitoringsuite.NewAlertRuleOp(client)
+	api := NewAlertRuleOp(client)
 	ctx := context.Background()
 	actual, err := api.ReadHistory(ctx, "123", uuid.New(), uuid.New())
 	require.NoError(t, err)
@@ -196,9 +198,54 @@ func TestAlertRuleOp_ReadHistory(t *testing.T) {
 func TestAlertRuleOp_ReadHistory_404(t *testing.T) {
 	expected := newErrorResponse(404, "No History matches the given query.")
 	client := newTestClient(expected, http.StatusNotFound)
-	api := monitoringsuite.NewAlertRuleOp(client)
+	api := NewAlertRuleOp(client)
 	ctx := context.Background()
 	_, err := api.ReadHistory(ctx, "123", uuid.New(), uuid.New())
 	require.Error(t, err)
 	require.ErrorContains(t, err, "Not Found")
+}
+
+func TestAlertRuleIntegrated(t *testing.T) {
+	t.Skip("TBW")
+	client, err := IntegratedClient(t)
+	require.NoError(t, err)
+	api := NewAlertRuleOp(client)
+	ctx := context.Background()
+	project := WithAlertProject(t, client, ctx)
+
+	projectID := fmt.Sprintf("%d", project.GetID())
+
+	// Create
+	name := testutil.RandomName("integration-rule", 16, testutil.CharSetAlphaNum)
+	rule := v1.AlertRule{
+		Name:  v1.NewOptString(name),
+		Query: "up == 0",
+	}
+	created, err := api.Create(ctx, projectID, &rule)
+	require.NoError(t, err)
+	require.NotNil(t, created)
+	ruleID := created.GetUID()
+	defer api.Delete(ctx, projectID, ruleID)
+
+	// Read
+	read, err := api.Read(ctx, projectID, ruleID)
+	require.NoError(t, err)
+	require.NotNil(t, read)
+	require.Equal(t, created.GetUID(), read.GetUID())
+	require.Equal(t, created.GetName(), read.GetName())
+	require.Equal(t, created.GetQuery(), read.GetQuery())
+
+	// Update
+	updateReq := *read
+	updateReq.Query = "up == 1"
+	updated, err := api.Update(ctx, projectID, ruleID, &updateReq)
+	require.NoError(t, err)
+	require.NotNil(t, updated)
+	require.Equal(t, "up == 1", updated.GetQuery())
+
+	// List
+	params := v1.AlertsProjectsRulesListParams{Count: v1.NewOptInt(10), From: v1.NewOptInt(0)}
+	rules, err := api.List(ctx, params)
+	require.NoError(t, err)
+	require.NotNil(t, rules)
 }

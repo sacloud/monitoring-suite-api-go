@@ -17,6 +17,7 @@ package monitoringsuite_test
 import (
 	"context"
 	"net/http"
+	"strconv"
 	"testing"
 
 	. "github.com/sacloud/monitoring-suite-api-go"
@@ -150,4 +151,59 @@ func TestLogRoutingOp_Delete_400(t *testing.T) {
 	err := api.Delete(ctx, "0")
 	require.Error(t, err)
 	require.ErrorContains(t, err, "Bad Request")
+}
+
+func TestLogRoutingOp_Integration(t *testing.T) {
+	client, err := IntegratedClient(t)
+	require.NoError(t, err)
+	api := NewLogRoutingOp(client)
+	ctx := context.Background()
+
+	// TODO: Create or fetch a valid Publisher and LogTable (log storage) for integration
+	// For now, these should be replaced with actual resource creation or fixture helpers
+	publisher := v1.Publisher{
+		Code:        "test-publisher-code",
+		Description: v1.NewOptString("integration test publisher"),
+		Variants:    nil, // add variants if required
+	}
+	logStorage := v1.LogStorage{
+		ID:   1,
+		Name: v1.NewOptString("integration-log-storage"),
+	}
+
+	createReq := v1.LogRouting{
+		ResourceID:    v1.NewOptNilInt64(1), // replace with actual resource ID
+		Publisher:     publisher,
+		PublisherCode: publisher.Code,
+		Variant:       "default", // replace with actual variant if required
+		LogStorage:    logStorage,
+		LogStorageID:  v1.NewNilInt64(1), // replace with actual log storage ID
+	}
+	created, err := api.Create(ctx, createReq)
+	require.NoError(t, err)
+	require.NotNil(t, created)
+	defer api.Delete(ctx, strconv.FormatInt(created.GetID(), 10))
+
+	// Read
+	read, err := api.Read(ctx, strconv.FormatInt(created.GetID(), 10))
+	require.NoError(t, err)
+	require.NotNil(t, read)
+	require.Equal(t, created.GetID(), read.GetID())
+
+	// Update (no updatable fields in LogRouting, so just call update with same data)
+	updated, err := api.Update(ctx, strconv.FormatInt(created.GetID(), 10), created)
+	require.NoError(t, err)
+	require.NotNil(t, updated)
+
+	// List
+	routings, err := api.List(ctx, v1.LogsRoutingsListParams{Count: v1.NewOptInt(10), From: v1.NewOptInt(0)})
+	require.NoError(t, err)
+	found := false
+	for _, r := range routings {
+		if r.GetID() == created.GetID() {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "created log routing not found in list")
 }

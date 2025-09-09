@@ -16,6 +16,7 @@ package monitoringsuite_test
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -155,4 +156,49 @@ func TestMetricsRoutingOp_Delete_400(t *testing.T) {
 	err := api.Delete(ctx, "0")
 	require.Error(t, err)
 	require.ErrorContains(t, err, "Bad Request")
+}
+
+func TestMetricsRoutingOp_Integration(t *testing.T) {
+	client, err := IntegratedClient(t)
+	require.NoError(t, err)
+	api := NewMetricsRoutingOp(client)
+	ctx := context.Background()
+
+	// Use TemplateMetricsRouting as a base for create
+	createReq := TemplateMetricsRouting
+	createReq.ID = 0 // ensure new
+	res, err := api.Create(ctx, createReq)
+	require.NoError(t, err)
+	require.NotNil(t, res)
+	id := res.GetID()
+	idStr := fmt.Sprintf("%d", id)
+	defer api.Delete(ctx, idStr)
+
+	// Read
+	got, err := api.Read(ctx, idStr)
+	require.NoError(t, err)
+	require.NotNil(t, got)
+	require.Equal(t, id, got.GetID())
+	require.Equal(t, createReq.PublisherCode, got.GetPublisherCode())
+	require.Equal(t, createReq.Variant, got.GetVariant())
+
+	// Update
+	updateReq := *got
+	updateReq.Variant = "integration-updated"
+	updated, err := api.Update(ctx, idStr, &updateReq)
+	require.NoError(t, err)
+	require.NotNil(t, updated)
+	require.Equal(t, "integration-updated", updated.GetVariant())
+
+	// List
+	list, err := api.List(ctx, v1.MetricsRoutingsListParams{Count: v1.NewOptInt(10), From: v1.NewOptInt(0)})
+	require.NoError(t, err)
+	found := false
+	for _, r := range list {
+		if r.GetID() == id {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "created metrics routing not found in list")
 }

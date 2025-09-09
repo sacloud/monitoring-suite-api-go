@@ -88,3 +88,25 @@ func TestPublisherOp_Read_404(t *testing.T) {
 	require.Nil(t, actual)
 	require.ErrorContains(t, err, "publisher not found")
 }
+
+func TestPublisherIntegrated(t *testing.T) {
+	client, err := IntegratedClient(t)
+	require.NoError(t, err)
+	api := NewPublisherOp(client)
+	ctx := context.Background()
+
+	// List
+	publishers, err := api.List(ctx, 10, 0)
+	require.NoError(t, err)
+	require.NotNil(t, publishers)
+	if len(publishers) == 0 {
+		t.Skip("No publishers available to test Read")
+	}
+
+	// Read
+	code := publishers[0].Code
+	pub, err := api.Read(ctx, code)
+	require.NoError(t, err)
+	require.NotNil(t, pub)
+	require.Equal(t, code, pub.Code)
+}

@@ -17,6 +17,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/go-faster/errors"
 	"github.com/google/uuid"
@@ -27,9 +28,9 @@ import (
 type NotificationTargetAPI interface {
 	List(ctx context.Context, params v1.AlertsProjectsNotificationTargetsListParams) ([]v1.NotificationTarget, error)
 	Create(ctx context.Context, params v1.NotificationTarget) (*v1.NotificationTarget, error)
-	Read(ctx context.Context, id uuid.UUID) (*v1.NotificationTarget, error)
-	Update(ctx context.Context, id uuid.UUID, request *v1.NotificationTarget) (*v1.NotificationTarget, error)
-	Delete(ctx context.Context, id uuid.UUID) error
+	Read(ctx context.Context, projectID string, id uuid.UUID) (*v1.NotificationTarget, error)
+	Update(ctx context.Context, projectID string, id uuid.UUID, request *v1.NotificationTarget) (*v1.NotificationTarget, error)
+	Delete(ctx context.Context, projectID string, id uuid.UUID) error
 }
 
 var _ NotificationTargetAPI = (*notificationTargetOp)(nil)
@@ -58,9 +59,16 @@ func (op *notificationTargetOp) List(ctx context.Context, params v1.AlertsProjec
 	}
 }
 
-func (op *notificationTargetOp) Read(ctx context.Context, id uuid.UUID) (*v1.NotificationTarget, error) {
+func (op *notificationTargetOp) Read(ctx context.Context, projectID string, id uuid.UUID) (*v1.NotificationTarget, error) {
 	// :TODO: AlertsProjectsNotificationTargetsRetrieveParams() taking int instead of int64 can be subject to change
-	params := v1.AlertsProjectsNotificationTargetsRetrieveParams{UID: id}
+	intId, err := strconv.ParseInt(projectID, 10, 64)
+	if err != nil {
+		return nil, NewAPIError("NotificationTarget.Read", 0, fmt.Errorf("invalid ProjectID: %w", err))
+	}
+	params := v1.AlertsProjectsNotificationTargetsRetrieveParams{
+		ProjectResourceID: intId,
+		UID:               id,
+	}
 	result, err := op.client.AlertsProjectsNotificationTargetsRetrieve(ctx, params)
 	if e, ok := errors.Into[*ogen.UnexpectedStatusCodeError](err); ok {
 		switch e.StatusCode {
@@ -85,6 +93,7 @@ func (op *notificationTargetOp) Create(ctx context.Context, params v1.Notificati
 	if !ok {
 		return nil, NewAPIError("NotificationTarget.Create", 0, fmt.Errorf("ProjectID is required for %v", params.GetProjectID()))
 	}
+	params.Config.SetToNull() // fix API glitch; config is ignored
 	createParams := v1.AlertsProjectsNotificationTargetsCreateParams{ProjectResourceID: projectResourceID}
 	result, err := op.client.AlertsProjectsNotificationTargetsCreate(ctx, &params, createParams)
 	if e, ok := errors.Into[*ogen.UnexpectedStatusCodeError](err); ok {
@@ -103,8 +112,15 @@ func (op *notificationTargetOp) Create(ctx context.Context, params v1.Notificati
 	}
 }
 
-func (op *notificationTargetOp) Update(ctx context.Context, id uuid.UUID, resource *v1.NotificationTarget) (*v1.NotificationTarget, error) {
-	params := v1.AlertsProjectsNotificationTargetsUpdateParams{UID: id}
+func (op *notificationTargetOp) Update(ctx context.Context, projectID string, id uuid.UUID, resource *v1.NotificationTarget) (*v1.NotificationTarget, error) {
+	intId, err := strconv.ParseInt(projectID, 10, 64)
+	if err != nil {
+		return nil, NewAPIError("NotificationTarget.Update", 0, fmt.Errorf("invalid ProjectID: %w", err))
+	}
+	params := v1.AlertsProjectsNotificationTargetsUpdateParams{
+		ProjectResourceID: intId,
+		UID:               id,
+	}
 	result, err := op.client.AlertsProjectsNotificationTargetsUpdate(ctx, resource, params)
 	if e, ok := errors.Into[*ogen.UnexpectedStatusCodeError](err); ok {
 		switch e.StatusCode {
@@ -123,9 +139,16 @@ func (op *notificationTargetOp) Update(ctx context.Context, id uuid.UUID, resour
 	}
 }
 
-func (op *notificationTargetOp) Delete(ctx context.Context, id uuid.UUID) error {
-	params := v1.AlertsProjectsNotificationTargetsDestroyParams{UID: id}
-	err := op.client.AlertsProjectsNotificationTargetsDestroy(ctx, params)
+func (op *notificationTargetOp) Delete(ctx context.Context, projectID string, id uuid.UUID) error {
+	intId, err := strconv.ParseInt(projectID, 10, 64)
+	if err != nil {
+		return NewAPIError("NotificationTarget.Delete", 0, fmt.Errorf("invalid ProjectID: %w", err))
+	}
+	params := v1.AlertsProjectsNotificationTargetsDestroyParams{
+		ProjectResourceID: intId,
+		UID:               id,
+	}
+	err = op.client.AlertsProjectsNotificationTargetsDestroy(ctx, params)
 	if e, ok := errors.Into[*ogen.UnexpectedStatusCodeError](err); ok {
 		switch e.StatusCode {
 		case http.StatusForbidden:

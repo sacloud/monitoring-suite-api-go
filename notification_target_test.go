@@ -16,6 +16,7 @@ package monitoringsuite_test
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -70,7 +71,7 @@ func TestNotificationTargetService_Read(t *testing.T) {
 	api := NewNotificationTargetOp(client)
 	ctx := context.Background()
 
-	actual, err := api.Read(ctx, uuid.New())
+	actual, err := api.Read(ctx, "12345", uuid.New())
 	require.NoError(t, err)
 	require.NotNil(t, actual)
 	require.Equal(t, TemplateNotificationTarget.GetUID(), actual.GetUID())
@@ -87,7 +88,7 @@ func TestNotificationTargetService_Read_404(t *testing.T) {
 	api := NewNotificationTargetOp(client)
 	ctx := context.Background()
 
-	_, err := api.Read(ctx, uuid.New())
+	_, err := api.Read(ctx, "12345", uuid.New())
 	require.Error(t, err)
 	require.ErrorContains(t, err, "Not Found")
 }
@@ -116,7 +117,7 @@ func TestNotificationTargetService_Update(t *testing.T) {
 	api := NewNotificationTargetOp(client)
 	ctx := context.Background()
 
-	updated, err := api.Update(ctx, uuid.New(), &nt)
+	updated, err := api.Update(ctx, "12345", uuid.New(), &nt)
 	require.NoError(t, err)
 	require.NotNil(t, updated)
 	require.Equal(t, nt.GetUID(), updated.GetUID())
@@ -134,7 +135,7 @@ func TestNotificationTargetService_Update_400(t *testing.T) {
 	ctx := context.Background()
 
 	nt := v1.NotificationTarget{}
-	updated, err := api.Update(ctx, uuid.New(), &nt)
+	updated, err := api.Update(ctx, "12345", uuid.New(), &nt)
 	require.Nil(t, updated)
 	require.Error(t, err)
 	require.ErrorContains(t, err, "invalid")
@@ -146,7 +147,7 @@ func TestNotificationTargetService_Delete(t *testing.T) {
 	api := NewNotificationTargetOp(client)
 	ctx := context.Background()
 
-	err := api.Delete(ctx, uuid.New())
+	err := api.Delete(ctx, "12345", uuid.New())
 	require.NoError(t, err)
 }
 
@@ -156,7 +157,54 @@ func TestNotificationTargetService_Delete_400(t *testing.T) {
 	api := NewNotificationTargetOp(client)
 	ctx := context.Background()
 
-	err := api.Delete(ctx, uuid.New())
+	err := api.Delete(ctx, "12345", uuid.New())
 	require.Error(t, err)
 	require.ErrorContains(t, err, "Bad Request")
+}
+
+func TestNotificationTargetIntegrated(t *testing.T) {
+	client, err := IntegratedClient(t)
+	require.NoError(t, err)
+	api := NewNotificationTargetOp(client)
+	ctx := context.Background()
+	project := WithAlertProject(t, client, ctx)
+	pk := fmt.Sprintf("%d", project.GetID())
+
+	// Create
+	nt := v1.NotificationTarget{
+		ProjectID:   v1.NewNilInt64(project.GetID()),
+		ServiceType: v1.NotificationTargetServiceTypeSAKURASIMPLENOTICE,
+		URL:         "https://example.com/webhook",
+	}
+	created, err := api.Create(ctx, nt)
+	require.NoError(t, err)
+	require.NotNil(t, created)
+	id := created.GetUID()
+	defer api.Delete(ctx, pk, id)
+
+	// Read
+	read, err := api.Read(ctx, pk, id)
+	require.NoError(t, err)
+	require.NotNil(t, read)
+	require.Equal(t, created.GetUID(), read.GetUID())
+	require.Equal(t, created.GetProjectID(), read.GetProjectID())
+
+	// Update
+	updateReq := *read
+	updateReq.Description = v1.NewOptString("integration test notification target updated")
+	updated, err := api.Update(ctx, pk, id, &updateReq)
+	require.NoError(t, err)
+	require.NotNil(t, updated)
+	require.Equal(t, "integration test notification target updated", updated.GetDescription().Value)
+
+	// List
+	params := v1.AlertsProjectsNotificationTargetsListParams{
+		ProjectResourceID: project.GetID(),
+		Count:             v1.NewOptInt(10),
+		From:              v1.NewOptInt(0),
+	}
+	targets, err := api.List(ctx, params)
+	require.NoError(t, err)
+	require.NotNil(t, targets)
+	require.GreaterOrEqual(t, len(targets), 1)
 }

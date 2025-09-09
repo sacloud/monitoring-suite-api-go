@@ -16,6 +16,7 @@ package monitoringsuite_test
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -310,4 +311,38 @@ func TestMetricsStorageOp_DeleteKey_403(t *testing.T) {
 	err := api.DeleteKey(ctx, "12345", "5")
 	require.Error(t, err)
 	require.ErrorContains(t, err, "insufficient permissions")
+}
+
+func TestMetricsStorageIntegrated(t *testing.T) {
+	client, err := IntegratedClient(t)
+	require.NoError(t, err)
+	api := NewMetricsStorageOp(client)
+	ctx := context.Background()
+	tmp := WithMetricsStorage(t, client, ctx)
+	sid := fmt.Sprintf("%d", tmp.GetID())
+
+	projects, err := api.List(ctx, 1, 0)
+	require.NoError(t, err)
+	require.NotNil(t, projects)
+
+	// Read
+	read, err := api.Read(ctx, sid)
+	require.NoError(t, err)
+	require.NotNil(t, read)
+	require.Equal(t, tmp.GetID(), read.GetID())
+	require.Equal(t, tmp.GetName(), read.GetName())
+
+	// Update
+	updateReq := *read
+	updateReq.Description = v1.NewOptString("integration test metrics tank updated")
+	updated, err := api.Update(ctx, sid, &updateReq)
+	require.NoError(t, err)
+	require.NotNil(t, updated)
+	require.Equal(t, "integration test metrics tank updated", updated.GetDescription().Or("failure"))
+
+	// List
+	tanks, err := api.List(ctx, 10, 0)
+	require.NoError(t, err)
+	require.NotNil(t, tanks)
+	require.GreaterOrEqual(t, len(tanks), 1)
 }

@@ -16,6 +16,7 @@ package monitoringsuite_test
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -313,4 +314,51 @@ func TestLogsStorageOp_DeleteKey_403(t *testing.T) {
 	err := api.DeleteKey(ctx, "12345", "5")
 	require.Error(t, err)
 	require.ErrorContains(t, err, "insufficient permissions")
+}
+
+func TestLogsStorageOp_Integration(t *testing.T) {
+	client, err := IntegratedClient(t)
+	require.NoError(t, err)
+	api := NewLogsStorageOp(client)
+	ctx := context.Background()
+
+	// Create
+	createReq := v1.LogStorageCreate{
+		Name:        "integration-log-table",
+		Description: "integration test log table",
+		IsSystem:    false,
+	}
+	created, err := api.Create(ctx, createReq)
+	require.NoError(t, err)
+	require.NotNil(t, created)
+	id := fmt.Sprintf("%d", created.GetID())
+	defer api.Delete(ctx, id)
+
+	// Read
+	read, err := api.Read(ctx, id)
+	require.NoError(t, err)
+	require.NotNil(t, read)
+	require.Equal(t, created.GetID(), read.GetID())
+	require.Equal(t, created.GetName(), read.GetName())
+
+	// Update
+	updateReq := *read
+	updateReq.Description = v1.NewOptString("integration test log table updated")
+	updated, err := api.Update(ctx, id, &updateReq)
+	require.NoError(t, err)
+	require.NotNil(t, updated)
+	require.Equal(t, "integration test log table updated", updated.GetDescription())
+
+	// List
+	params := v1.LogsStoragesListParams{Count: v1.NewOptInt(10), From: v1.NewOptInt(0)}
+	tables, err := api.List(ctx, params)
+	require.NoError(t, err)
+	found := false
+	for _, t := range tables {
+		if t.GetID() == created.GetID() {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "created log table not found in list")
 }
