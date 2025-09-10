@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/go-faster/errors"
+	"github.com/go-faster/jx"
 	"github.com/google/uuid"
 )
 
@@ -2744,6 +2745,51 @@ func (o NilMetricsStorageIcon) Or(d MetricsStorageIcon) MetricsStorageIcon {
 	return d
 }
 
+// NewNilNotificationTargetConfig returns new NilNotificationTargetConfig with value set to v.
+func NewNilNotificationTargetConfig(v NotificationTargetConfig) NilNotificationTargetConfig {
+	return NilNotificationTargetConfig{
+		Value: v,
+	}
+}
+
+// NilNotificationTargetConfig is nullable NotificationTargetConfig.
+type NilNotificationTargetConfig struct {
+	Value NotificationTargetConfig
+	Null  bool
+}
+
+// SetTo sets value to v.
+func (o *NilNotificationTargetConfig) SetTo(v NotificationTargetConfig) {
+	o.Null = false
+	o.Value = v
+}
+
+// IsNull returns true if value is Null.
+func (o NilNotificationTargetConfig) IsNull() bool { return o.Null }
+
+// SetToNull sets value to null.
+func (o *NilNotificationTargetConfig) SetToNull() {
+	o.Null = true
+	var v NotificationTargetConfig
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o NilNotificationTargetConfig) Get() (v NotificationTargetConfig, ok bool) {
+	if o.Null {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o NilNotificationTargetConfig) Or(d NotificationTargetConfig) NotificationTargetConfig {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewNilWrappedAlertProjectIcon returns new NilWrappedAlertProjectIcon with value set to v.
 func NewNilWrappedAlertProjectIcon(v WrappedAlertProjectIcon) NilWrappedAlertProjectIcon {
 	return NilWrappedAlertProjectIcon{
@@ -3038,7 +3084,7 @@ type NotificationTarget struct {
 	// * `SAKURA_SIMPLE_NOTICE` - Sakura cloud simple notice.
 	ServiceType NotificationTargetServiceType `json:"service_type"`
 	URL         string                        `json:"url"`
-	Config      NotificationTargetConfig      `json:"config"`
+	Config      NilNotificationTargetConfig   `json:"config"`
 	Description OptString                     `json:"description"`
 }
 
@@ -3063,7 +3109,7 @@ func (s *NotificationTarget) GetURL() string {
 }
 
 // GetConfig returns the value of Config.
-func (s *NotificationTarget) GetConfig() NotificationTargetConfig {
+func (s *NotificationTarget) GetConfig() NilNotificationTargetConfig {
 	return s.Config
 }
 
@@ -3093,7 +3139,7 @@ func (s *NotificationTarget) SetURL(val string) {
 }
 
 // SetConfig sets the value of Config.
-func (s *NotificationTarget) SetConfig(val NotificationTargetConfig) {
+func (s *NotificationTarget) SetConfig(val NilNotificationTargetConfig) {
 	s.Config = val
 }
 
@@ -3102,7 +3148,75 @@ func (s *NotificationTarget) SetDescription(val OptString) {
 	s.Description = val
 }
 
-type NotificationTargetConfig struct{}
+// NotificationTargetConfig represents sum type.
+type NotificationTargetConfig struct {
+	Type                      NotificationTargetConfigType // switch on this field
+	NotificationTargetConfig0 NotificationTargetConfig0
+	AnyArray                  []jx.Raw
+}
+
+// NotificationTargetConfigType is oneOf type of NotificationTargetConfig.
+type NotificationTargetConfigType string
+
+// Possible values for NotificationTargetConfigType.
+const (
+	NotificationTargetConfig0NotificationTargetConfig NotificationTargetConfigType = "NotificationTargetConfig0"
+	AnyArrayNotificationTargetConfig                  NotificationTargetConfigType = "[]jx.Raw"
+)
+
+// IsNotificationTargetConfig0 reports whether NotificationTargetConfig is NotificationTargetConfig0.
+func (s NotificationTargetConfig) IsNotificationTargetConfig0() bool {
+	return s.Type == NotificationTargetConfig0NotificationTargetConfig
+}
+
+// IsAnyArray reports whether NotificationTargetConfig is []jx.Raw.
+func (s NotificationTargetConfig) IsAnyArray() bool {
+	return s.Type == AnyArrayNotificationTargetConfig
+}
+
+// SetNotificationTargetConfig0 sets NotificationTargetConfig to NotificationTargetConfig0.
+func (s *NotificationTargetConfig) SetNotificationTargetConfig0(v NotificationTargetConfig0) {
+	s.Type = NotificationTargetConfig0NotificationTargetConfig
+	s.NotificationTargetConfig0 = v
+}
+
+// GetNotificationTargetConfig0 returns NotificationTargetConfig0 and true boolean if NotificationTargetConfig is NotificationTargetConfig0.
+func (s NotificationTargetConfig) GetNotificationTargetConfig0() (v NotificationTargetConfig0, ok bool) {
+	if !s.IsNotificationTargetConfig0() {
+		return v, false
+	}
+	return s.NotificationTargetConfig0, true
+}
+
+// NewNotificationTargetConfig0NotificationTargetConfig returns new NotificationTargetConfig from NotificationTargetConfig0.
+func NewNotificationTargetConfig0NotificationTargetConfig(v NotificationTargetConfig0) NotificationTargetConfig {
+	var s NotificationTargetConfig
+	s.SetNotificationTargetConfig0(v)
+	return s
+}
+
+// SetAnyArray sets NotificationTargetConfig to []jx.Raw.
+func (s *NotificationTargetConfig) SetAnyArray(v []jx.Raw) {
+	s.Type = AnyArrayNotificationTargetConfig
+	s.AnyArray = v
+}
+
+// GetAnyArray returns []jx.Raw and true boolean if NotificationTargetConfig is []jx.Raw.
+func (s NotificationTargetConfig) GetAnyArray() (v []jx.Raw, ok bool) {
+	if !s.IsAnyArray() {
+		return v, false
+	}
+	return s.AnyArray, true
+}
+
+// NewAnyArrayNotificationTargetConfig returns new NotificationTargetConfig from []jx.Raw.
+func NewAnyArrayNotificationTargetConfig(v []jx.Raw) NotificationTargetConfig {
+	var s NotificationTargetConfig
+	s.SetAnyArray(v)
+	return s
+}
+
+type NotificationTargetConfig0 struct{}
 
 // * `SAKURA_SIMPLE_NOTICE` - Sakura cloud simple notice.
 type NotificationTargetServiceType string
@@ -4644,6 +4758,69 @@ func (o OptNilPatchedMetricsStorageIcon) Get() (v PatchedMetricsStorageIcon, ok 
 
 // Or returns value if set, or given parameter if does not.
 func (o OptNilPatchedMetricsStorageIcon) Or(d PatchedMetricsStorageIcon) PatchedMetricsStorageIcon {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptNilPatchedNotificationTargetConfig returns new OptNilPatchedNotificationTargetConfig with value set to v.
+func NewOptNilPatchedNotificationTargetConfig(v PatchedNotificationTargetConfig) OptNilPatchedNotificationTargetConfig {
+	return OptNilPatchedNotificationTargetConfig{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptNilPatchedNotificationTargetConfig is optional nullable PatchedNotificationTargetConfig.
+type OptNilPatchedNotificationTargetConfig struct {
+	Value PatchedNotificationTargetConfig
+	Set   bool
+	Null  bool
+}
+
+// IsSet returns true if OptNilPatchedNotificationTargetConfig was set.
+func (o OptNilPatchedNotificationTargetConfig) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptNilPatchedNotificationTargetConfig) Reset() {
+	var v PatchedNotificationTargetConfig
+	o.Value = v
+	o.Set = false
+	o.Null = false
+}
+
+// SetTo sets value to v.
+func (o *OptNilPatchedNotificationTargetConfig) SetTo(v PatchedNotificationTargetConfig) {
+	o.Set = true
+	o.Null = false
+	o.Value = v
+}
+
+// IsNull returns true if value is Null.
+func (o OptNilPatchedNotificationTargetConfig) IsNull() bool { return o.Null }
+
+// SetToNull sets value to null.
+func (o *OptNilPatchedNotificationTargetConfig) SetToNull() {
+	o.Set = true
+	o.Null = true
+	var v PatchedNotificationTargetConfig
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptNilPatchedNotificationTargetConfig) Get() (v PatchedNotificationTargetConfig, ok bool) {
+	if o.Null {
+		return v, false
+	}
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptNilPatchedNotificationTargetConfig) Or(d PatchedNotificationTargetConfig) PatchedNotificationTargetConfig {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -8074,7 +8251,7 @@ type PatchedNotificationTarget struct {
 	// * `SAKURA_SIMPLE_NOTICE` - Sakura cloud simple notice.
 	ServiceType OptPatchedNotificationTargetServiceType `json:"service_type"`
 	URL         OptString                               `json:"url"`
-	Config      *PatchedNotificationTargetConfig        `json:"config"`
+	Config      OptNilPatchedNotificationTargetConfig   `json:"config"`
 	Description OptString                               `json:"description"`
 }
 
@@ -8099,7 +8276,7 @@ func (s *PatchedNotificationTarget) GetURL() OptString {
 }
 
 // GetConfig returns the value of Config.
-func (s *PatchedNotificationTarget) GetConfig() *PatchedNotificationTargetConfig {
+func (s *PatchedNotificationTarget) GetConfig() OptNilPatchedNotificationTargetConfig {
 	return s.Config
 }
 
@@ -8129,7 +8306,7 @@ func (s *PatchedNotificationTarget) SetURL(val OptString) {
 }
 
 // SetConfig sets the value of Config.
-func (s *PatchedNotificationTarget) SetConfig(val *PatchedNotificationTargetConfig) {
+func (s *PatchedNotificationTarget) SetConfig(val OptNilPatchedNotificationTargetConfig) {
 	s.Config = val
 }
 
@@ -8138,7 +8315,75 @@ func (s *PatchedNotificationTarget) SetDescription(val OptString) {
 	s.Description = val
 }
 
-type PatchedNotificationTargetConfig struct{}
+// PatchedNotificationTargetConfig represents sum type.
+type PatchedNotificationTargetConfig struct {
+	Type                             PatchedNotificationTargetConfigType // switch on this field
+	PatchedNotificationTargetConfig0 PatchedNotificationTargetConfig0
+	AnyArray                         []jx.Raw
+}
+
+// PatchedNotificationTargetConfigType is oneOf type of PatchedNotificationTargetConfig.
+type PatchedNotificationTargetConfigType string
+
+// Possible values for PatchedNotificationTargetConfigType.
+const (
+	PatchedNotificationTargetConfig0PatchedNotificationTargetConfig PatchedNotificationTargetConfigType = "PatchedNotificationTargetConfig0"
+	AnyArrayPatchedNotificationTargetConfig                         PatchedNotificationTargetConfigType = "[]jx.Raw"
+)
+
+// IsPatchedNotificationTargetConfig0 reports whether PatchedNotificationTargetConfig is PatchedNotificationTargetConfig0.
+func (s PatchedNotificationTargetConfig) IsPatchedNotificationTargetConfig0() bool {
+	return s.Type == PatchedNotificationTargetConfig0PatchedNotificationTargetConfig
+}
+
+// IsAnyArray reports whether PatchedNotificationTargetConfig is []jx.Raw.
+func (s PatchedNotificationTargetConfig) IsAnyArray() bool {
+	return s.Type == AnyArrayPatchedNotificationTargetConfig
+}
+
+// SetPatchedNotificationTargetConfig0 sets PatchedNotificationTargetConfig to PatchedNotificationTargetConfig0.
+func (s *PatchedNotificationTargetConfig) SetPatchedNotificationTargetConfig0(v PatchedNotificationTargetConfig0) {
+	s.Type = PatchedNotificationTargetConfig0PatchedNotificationTargetConfig
+	s.PatchedNotificationTargetConfig0 = v
+}
+
+// GetPatchedNotificationTargetConfig0 returns PatchedNotificationTargetConfig0 and true boolean if PatchedNotificationTargetConfig is PatchedNotificationTargetConfig0.
+func (s PatchedNotificationTargetConfig) GetPatchedNotificationTargetConfig0() (v PatchedNotificationTargetConfig0, ok bool) {
+	if !s.IsPatchedNotificationTargetConfig0() {
+		return v, false
+	}
+	return s.PatchedNotificationTargetConfig0, true
+}
+
+// NewPatchedNotificationTargetConfig0PatchedNotificationTargetConfig returns new PatchedNotificationTargetConfig from PatchedNotificationTargetConfig0.
+func NewPatchedNotificationTargetConfig0PatchedNotificationTargetConfig(v PatchedNotificationTargetConfig0) PatchedNotificationTargetConfig {
+	var s PatchedNotificationTargetConfig
+	s.SetPatchedNotificationTargetConfig0(v)
+	return s
+}
+
+// SetAnyArray sets PatchedNotificationTargetConfig to []jx.Raw.
+func (s *PatchedNotificationTargetConfig) SetAnyArray(v []jx.Raw) {
+	s.Type = AnyArrayPatchedNotificationTargetConfig
+	s.AnyArray = v
+}
+
+// GetAnyArray returns []jx.Raw and true boolean if PatchedNotificationTargetConfig is []jx.Raw.
+func (s PatchedNotificationTargetConfig) GetAnyArray() (v []jx.Raw, ok bool) {
+	if !s.IsAnyArray() {
+		return v, false
+	}
+	return s.AnyArray, true
+}
+
+// NewAnyArrayPatchedNotificationTargetConfig returns new PatchedNotificationTargetConfig from []jx.Raw.
+func NewAnyArrayPatchedNotificationTargetConfig(v []jx.Raw) PatchedNotificationTargetConfig {
+	var s PatchedNotificationTargetConfig
+	s.SetAnyArray(v)
+	return s
+}
+
+type PatchedNotificationTargetConfig0 struct{}
 
 // * `SAKURA_SIMPLE_NOTICE` - Sakura cloud simple notice.
 type PatchedNotificationTargetServiceType string

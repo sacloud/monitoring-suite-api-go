@@ -4868,7 +4868,11 @@
             "maxLength": 1024
           },
           "config": {
-            "type": "object",
+            "anyOf": [
+              {"type": "object"},
+              {"type": "array"}
+            ],
+            "nullable": true,
             "readOnly": true
           },
           "description": {
@@ -6323,7 +6327,11 @@
             "maxLength": 1024
           },
           "config": {
-            "type": "object",
+            "anyOf": [
+              {"type": "object"},
+              {"type": "array"}
+            ],
+            "nullable": true,
             "readOnly": true
           },
           "description": {

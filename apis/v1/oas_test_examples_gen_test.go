@@ -503,6 +503,18 @@ func TestNotificationTargetConfig_EncodeDecode(t *testing.T) {
 	var typ2 NotificationTargetConfig
 	require.NoError(t, typ2.Decode(jx.DecodeBytes(data)))
 }
+func TestNotificationTargetConfig0_EncodeDecode(t *testing.T) {
+	var typ NotificationTargetConfig0
+	typ.SetFake()
+
+	e := jx.Encoder{}
+	typ.Encode(&e)
+	data := e.Bytes()
+	require.True(t, std.Valid(data), "Encoded: %s", data)
+
+	var typ2 NotificationTargetConfig0
+	require.NoError(t, typ2.Decode(jx.DecodeBytes(data)))
+}
 func TestNotificationTargetServiceType_EncodeDecode(t *testing.T) {
 	var typ NotificationTargetServiceType
 	typ.SetFake()
@@ -1005,6 +1017,18 @@ func TestPatchedNotificationTargetConfig_EncodeDecode(t *testing.T) {
 	require.True(t, std.Valid(data), "Encoded: %s", data)
 
 	var typ2 PatchedNotificationTargetConfig
+	require.NoError(t, typ2.Decode(jx.DecodeBytes(data)))
+}
+func TestPatchedNotificationTargetConfig0_EncodeDecode(t *testing.T) {
+	var typ PatchedNotificationTargetConfig0
+	typ.SetFake()
+
+	e := jx.Encoder{}
+	typ.Encode(&e)
+	data := e.Bytes()
+	require.True(t, std.Valid(data), "Encoded: %s", data)
+
+	var typ2 PatchedNotificationTargetConfig0
 	require.NoError(t, typ2.Decode(jx.DecodeBytes(data)))
 }
 func TestPatchedNotificationTargetServiceType_EncodeDecode(t *testing.T) {

@@ -5698,6 +5698,50 @@ func (s *NilMetricsStorageIcon) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes NotificationTargetConfig as json.
+func (o NilNotificationTargetConfig) Encode(e *jx.Encoder) {
+	if o.Null {
+		e.Null()
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes NotificationTargetConfig from json.
+func (o *NilNotificationTargetConfig) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode NilNotificationTargetConfig to nil")
+	}
+	if d.Next() == jx.Null {
+		if err := d.Null(); err != nil {
+			return err
+		}
+
+		var v NotificationTargetConfig
+		o.Value = v
+		o.Null = true
+		return nil
+	}
+	o.Null = false
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s NilNotificationTargetConfig) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *NilNotificationTargetConfig) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes WrappedAlertProjectIcon as json.
 func (o NilWrappedAlertProjectIcon) Encode(e *jx.Encoder) {
 	if o.Null {
@@ -6366,23 +6410,85 @@ func (s *NotificationTarget) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes NotificationTargetConfig as json.
+func (s NotificationTargetConfig) Encode(e *jx.Encoder) {
+	switch s.Type {
+	case NotificationTargetConfig0NotificationTargetConfig:
+		s.NotificationTargetConfig0.Encode(e)
+	case AnyArrayNotificationTargetConfig:
+		e.ArrStart()
+		for _, elem := range s.AnyArray {
+			if len(elem) != 0 {
+				e.Raw(elem)
+			}
+		}
+		e.ArrEnd()
+	}
+}
+
+// Decode decodes NotificationTargetConfig from json.
+func (s *NotificationTargetConfig) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode NotificationTargetConfig to nil")
+	}
+	// Sum type type_discriminator.
+	switch t := d.Next(); t {
+	case jx.Array:
+		s.AnyArray = make([]jx.Raw, 0)
+		if err := d.Arr(func(d *jx.Decoder) error {
+			var elem jx.Raw
+			v, err := d.RawAppend(nil)
+			elem = jx.Raw(v)
+			if err != nil {
+				return err
+			}
+			s.AnyArray = append(s.AnyArray, elem)
+			return nil
+		}); err != nil {
+			return err
+		}
+		s.Type = AnyArrayNotificationTargetConfig
+	case jx.Object:
+		if err := s.NotificationTargetConfig0.Decode(d); err != nil {
+			return err
+		}
+		s.Type = NotificationTargetConfig0NotificationTargetConfig
+	default:
+		return errors.Errorf("unexpected json type %q", t)
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s NotificationTargetConfig) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *NotificationTargetConfig) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode implements json.Marshaler.
-func (s *NotificationTargetConfig) Encode(e *jx.Encoder) {
+func (s *NotificationTargetConfig0) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
 	e.ObjEnd()
 }
 
 // encodeFields encodes fields.
-func (s *NotificationTargetConfig) encodeFields(e *jx.Encoder) {
+func (s *NotificationTargetConfig0) encodeFields(e *jx.Encoder) {
 }
 
-var jsonFieldsNameOfNotificationTargetConfig = [0]string{}
+var jsonFieldsNameOfNotificationTargetConfig0 = [0]string{}
 
-// Decode decodes NotificationTargetConfig from json.
-func (s *NotificationTargetConfig) Decode(d *jx.Decoder) error {
+// Decode decodes NotificationTargetConfig0 from json.
+func (s *NotificationTargetConfig0) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode NotificationTargetConfig to nil")
+		return errors.New("invalid: unable to decode NotificationTargetConfig0 to nil")
 	}
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
@@ -6391,21 +6497,21 @@ func (s *NotificationTargetConfig) Decode(d *jx.Decoder) error {
 			return d.Skip()
 		}
 	}); err != nil {
-		return errors.Wrap(err, "decode NotificationTargetConfig")
+		return errors.Wrap(err, "decode NotificationTargetConfig0")
 	}
 
 	return nil
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *NotificationTargetConfig) MarshalJSON() ([]byte, error) {
+func (s *NotificationTargetConfig0) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *NotificationTargetConfig) UnmarshalJSON(data []byte) error {
+func (s *NotificationTargetConfig0) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -7505,6 +7611,55 @@ func (s OptNilPatchedMetricsStorageIcon) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptNilPatchedMetricsStorageIcon) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes PatchedNotificationTargetConfig as json.
+func (o OptNilPatchedNotificationTargetConfig) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	if o.Null {
+		e.Null()
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes PatchedNotificationTargetConfig from json.
+func (o *OptNilPatchedNotificationTargetConfig) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptNilPatchedNotificationTargetConfig to nil")
+	}
+	if d.Next() == jx.Null {
+		if err := d.Null(); err != nil {
+			return err
+		}
+
+		var v PatchedNotificationTargetConfig
+		o.Value = v
+		o.Set = true
+		o.Null = true
+		return nil
+	}
+	o.Set = true
+	o.Null = false
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptNilPatchedNotificationTargetConfig) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptNilPatchedNotificationTargetConfig) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -14168,7 +14323,7 @@ func (s *PatchedNotificationTarget) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.Config != nil {
+		if s.Config.Set {
 			e.FieldStart("config")
 			s.Config.Encode(e)
 		}
@@ -14240,12 +14395,10 @@ func (s *PatchedNotificationTarget) Decode(d *jx.Decoder) error {
 			}
 		case "config":
 			if err := func() error {
-				s.Config = nil
-				var elem PatchedNotificationTargetConfig
-				if err := elem.Decode(d); err != nil {
+				s.Config.Reset()
+				if err := s.Config.Decode(d); err != nil {
 					return err
 				}
-				s.Config = &elem
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"config\"")
@@ -14284,23 +14437,85 @@ func (s *PatchedNotificationTarget) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes PatchedNotificationTargetConfig as json.
+func (s PatchedNotificationTargetConfig) Encode(e *jx.Encoder) {
+	switch s.Type {
+	case PatchedNotificationTargetConfig0PatchedNotificationTargetConfig:
+		s.PatchedNotificationTargetConfig0.Encode(e)
+	case AnyArrayPatchedNotificationTargetConfig:
+		e.ArrStart()
+		for _, elem := range s.AnyArray {
+			if len(elem) != 0 {
+				e.Raw(elem)
+			}
+		}
+		e.ArrEnd()
+	}
+}
+
+// Decode decodes PatchedNotificationTargetConfig from json.
+func (s *PatchedNotificationTargetConfig) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode PatchedNotificationTargetConfig to nil")
+	}
+	// Sum type type_discriminator.
+	switch t := d.Next(); t {
+	case jx.Array:
+		s.AnyArray = make([]jx.Raw, 0)
+		if err := d.Arr(func(d *jx.Decoder) error {
+			var elem jx.Raw
+			v, err := d.RawAppend(nil)
+			elem = jx.Raw(v)
+			if err != nil {
+				return err
+			}
+			s.AnyArray = append(s.AnyArray, elem)
+			return nil
+		}); err != nil {
+			return err
+		}
+		s.Type = AnyArrayPatchedNotificationTargetConfig
+	case jx.Object:
+		if err := s.PatchedNotificationTargetConfig0.Decode(d); err != nil {
+			return err
+		}
+		s.Type = PatchedNotificationTargetConfig0PatchedNotificationTargetConfig
+	default:
+		return errors.Errorf("unexpected json type %q", t)
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s PatchedNotificationTargetConfig) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *PatchedNotificationTargetConfig) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode implements json.Marshaler.
-func (s *PatchedNotificationTargetConfig) Encode(e *jx.Encoder) {
+func (s *PatchedNotificationTargetConfig0) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
 	e.ObjEnd()
 }
 
 // encodeFields encodes fields.
-func (s *PatchedNotificationTargetConfig) encodeFields(e *jx.Encoder) {
+func (s *PatchedNotificationTargetConfig0) encodeFields(e *jx.Encoder) {
 }
 
-var jsonFieldsNameOfPatchedNotificationTargetConfig = [0]string{}
+var jsonFieldsNameOfPatchedNotificationTargetConfig0 = [0]string{}
 
-// Decode decodes PatchedNotificationTargetConfig from json.
-func (s *PatchedNotificationTargetConfig) Decode(d *jx.Decoder) error {
+// Decode decodes PatchedNotificationTargetConfig0 from json.
+func (s *PatchedNotificationTargetConfig0) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode PatchedNotificationTargetConfig to nil")
+		return errors.New("invalid: unable to decode PatchedNotificationTargetConfig0 to nil")
 	}
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
@@ -14309,21 +14524,21 @@ func (s *PatchedNotificationTargetConfig) Decode(d *jx.Decoder) error {
 			return d.Skip()
 		}
 	}); err != nil {
-		return errors.Wrap(err, "decode PatchedNotificationTargetConfig")
+		return errors.Wrap(err, "decode PatchedNotificationTargetConfig0")
 	}
 
 	return nil
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *PatchedNotificationTargetConfig) MarshalJSON() ([]byte, error) {
+func (s *PatchedNotificationTargetConfig0) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *PatchedNotificationTargetConfig) UnmarshalJSON(data []byte) error {
+func (s *PatchedNotificationTargetConfig0) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

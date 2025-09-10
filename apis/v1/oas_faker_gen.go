@@ -1032,6 +1032,11 @@ func (s *NilMetricsStorageIcon) SetFake() {
 }
 
 // SetFake set fake values.
+func (s *NilNotificationTargetConfig) SetFake() {
+	s.Null = true
+}
+
+// SetFake set fake values.
 func (s *NilWrappedAlertProjectIcon) SetFake() {
 	s.Null = true
 }
@@ -1147,6 +1152,16 @@ func (s *NotificationTarget) SetFake() {
 
 // SetFake set fake values.
 func (s *NotificationTargetConfig) SetFake() {
+	var variant NotificationTargetConfig0
+
+	{
+		variant.SetFake()
+	}
+	s.SetNotificationTargetConfig0(variant)
+}
+
+// SetFake set fake values.
+func (s *NotificationTargetConfig0) SetFake() {
 }
 
 // SetFake set fake values.
@@ -1354,6 +1369,12 @@ func (s *OptNilPatchedLogStorageIcon) SetFake() {
 
 // SetFake set fake values.
 func (s *OptNilPatchedMetricsStorageIcon) SetFake() {
+	s.Null = true
+	s.Set = true
+}
+
+// SetFake set fake values.
+func (s *OptNilPatchedNotificationTargetConfig) SetFake() {
 	s.Null = true
 	s.Set = true
 }
@@ -2854,8 +2875,8 @@ func (s *PatchedNotificationTarget) SetFake() {
 		}
 	}
 	{
-		{ // Keep pointer nil to prevent infinite recursion.
-			s.Config = nil
+		{
+			s.Config.SetFake()
 		}
 	}
 	{
@@ -2867,6 +2888,16 @@ func (s *PatchedNotificationTarget) SetFake() {
 
 // SetFake set fake values.
 func (s *PatchedNotificationTargetConfig) SetFake() {
+	var variant PatchedNotificationTargetConfig0
+
+	{
+		variant.SetFake()
+	}
+	s.SetPatchedNotificationTargetConfig0(variant)
+}
+
+// SetFake set fake values.
+func (s *PatchedNotificationTargetConfig0) SetFake() {
 }
 
 // SetFake set fake values.

@@ -1664,6 +1664,24 @@ func (s *NotificationTarget) Validate() error {
 		})
 	}
 	if err := func() error {
+		if value, ok := s.Config.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "config",
+			Error: err,
+		})
+	}
+	if err := func() error {
 		if value, ok := s.Description.Get(); ok {
 			if err := func() error {
 				if err := (validate.String{
@@ -1693,6 +1711,20 @@ func (s *NotificationTarget) Validate() error {
 		return &validate.Error{Fields: failures}
 	}
 	return nil
+}
+
+func (s NotificationTargetConfig) Validate() error {
+	switch s.Type {
+	case NotificationTargetConfig0NotificationTargetConfig:
+		return nil // no validation needed
+	case AnyArrayNotificationTargetConfig:
+		if s.AnyArray == nil {
+			return errors.New("nil is invalid value")
+		}
+		return nil
+	default:
+		return errors.Errorf("invalid type %q", s.Type)
+	}
 }
 
 func (s NotificationTargetServiceType) Validate() error {
@@ -3556,6 +3588,24 @@ func (s *PatchedNotificationTarget) Validate() error {
 		})
 	}
 	if err := func() error {
+		if value, ok := s.Config.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "config",
+			Error: err,
+		})
+	}
+	if err := func() error {
 		if value, ok := s.Description.Get(); ok {
 			if err := func() error {
 				if err := (validate.String{
@@ -3585,6 +3635,20 @@ func (s *PatchedNotificationTarget) Validate() error {
 		return &validate.Error{Fields: failures}
 	}
 	return nil
+}
+
+func (s PatchedNotificationTargetConfig) Validate() error {
+	switch s.Type {
+	case PatchedNotificationTargetConfig0PatchedNotificationTargetConfig:
+		return nil // no validation needed
+	case AnyArrayPatchedNotificationTargetConfig:
+		if s.AnyArray == nil {
+			return errors.New("nil is invalid value")
+		}
+		return nil
+	default:
+		return errors.Errorf("invalid type %q", s.Type)
+	}
 }
 
 func (s PatchedNotificationTargetServiceType) Validate() error {
