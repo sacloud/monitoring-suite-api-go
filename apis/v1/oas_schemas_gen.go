@@ -934,8 +934,8 @@ const (
 	EnumMatcherFieldMatcher         FieldMatcherType = "enum"
 	MapKeyExistsMatcherFieldMatcher FieldMatcherType = "map-key-exists"
 	MapKeyValueMatcherFieldMatcher  FieldMatcherType = "map-key-value-matcher"
-	MapValueStrMatcherFieldMatcher  FieldMatcherType = "MapValueStrMatcher"
-	MapValueNumMatcherFieldMatcher  FieldMatcherType = "MapValueNumMatcher"
+	MapValueStrMatcherFieldMatcher  FieldMatcherType = "map-value-string"
+	MapValueNumMatcherFieldMatcher  FieldMatcherType = "map-value-number"
 )
 
 // IsOrMatcher reports whether FieldMatcher is OrMatcher.
