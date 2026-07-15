@@ -930,7 +930,7 @@ const (
 	AndMatcherFieldMatcher          FieldMatcherType = "and"
 	StrMatcherFieldMatcher          FieldMatcherType = "string"
 	NumMatcherFieldMatcher          FieldMatcherType = "number"
-	BoolMatcherFieldMatcher         FieldMatcherType = "BoolMatcher"
+	BoolMatcherFieldMatcher         FieldMatcherType = "boolean"
 	EnumMatcherFieldMatcher         FieldMatcherType = "enum"
 	MapKeyExistsMatcherFieldMatcher FieldMatcherType = "map-key-exists"
 	MapKeyValueMatcherFieldMatcher  FieldMatcherType = "map-key-value-matcher"

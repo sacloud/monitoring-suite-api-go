@@ -2079,7 +2079,7 @@ func (s FieldMatcher) encodeFields(e *jx.Encoder) {
 		}
 	case BoolMatcherFieldMatcher:
 		e.FieldStart("type")
-		e.Str("BoolMatcher")
+		e.Str("boolean")
 		{
 			s := s.BoolMatcher
 			{
@@ -2243,7 +2243,7 @@ func (s *FieldMatcher) Decode(d *jx.Decoder) error {
 				case "number":
 					s.Type = NumMatcherFieldMatcher
 					found = true
-				case "BoolMatcher":
+				case "boolean":
 					s.Type = BoolMatcherFieldMatcher
 					found = true
 				case "enum":
