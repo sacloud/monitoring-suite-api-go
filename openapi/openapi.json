@@ -4895,7 +4895,9 @@
             "number": "#/components/schemas/NumMatcher",
             "enum": "#/components/schemas/EnumMatcher",
             "map-key-exists": "#/components/schemas/MapKeyExistsMatcher",
-            "map-key-value-matcher": "#/components/schemas/MapKeyValueMatcher"
+            "map-key-value-matcher": "#/components/schemas/MapKeyValueMatcher",
+            "map-value-string": "#/components/schemas/MapValueStrMatcher",
+            "map-value-number": "#/components/schemas/MapValueNumMatcher"
           }
         }
       },
