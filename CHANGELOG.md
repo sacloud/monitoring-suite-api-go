@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.2.2](https://github.com/sacloud/monitoring-suite-api-go/compare/v0.2.1...v0.2.2) - 2026-07-22
+- log_measure_rule: fix openapi discriminator by @DCS-nishiura in https://github.com/sacloud/monitoring-suite-api-go/pull/116
+
 ## [v0.2.1](https://github.com/sacloud/monitoring-suite-api-go/compare/v0.2.0...v0.2.1) - 2026-06-16
 - notification_routing: support empty match labels by @repeatedly in https://github.com/sacloud/monitoring-suite-api-go/pull/109
 
