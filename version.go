@@ -16,4 +16,4 @@
 // Please migrate to that module. This repository will be archived.
 package monitoringsuite
 
-const Version = "0.2.2"
+const Version = "0.2.3"
