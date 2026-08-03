@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.2.3](https://github.com/sacloud/monitoring-suite-api-go/compare/v0.2.2...v0.2.3) - 2026-08-03
+- update README for repository transition by @shyouhei in https://github.com/sacloud/monitoring-suite-api-go/pull/114
+
 ## [v0.2.2](https://github.com/sacloud/monitoring-suite-api-go/compare/v0.2.1...v0.2.2) - 2026-07-22
 - log_measure_rule: fix openapi discriminator by @DCS-nishiura in https://github.com/sacloud/monitoring-suite-api-go/pull/116
 
